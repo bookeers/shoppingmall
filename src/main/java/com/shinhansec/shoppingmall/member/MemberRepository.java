@@ -25,7 +25,6 @@ public class MemberRepository {
             return null;
         }
         else {
-
             return members.get(0);
         }
     }

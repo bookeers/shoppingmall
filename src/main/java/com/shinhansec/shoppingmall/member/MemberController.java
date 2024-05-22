@@ -27,6 +27,8 @@ public class MemberController {
         return success(userId);
     }
 
+    //todo 로그인 구현
+
     private boolean isDuplicateId(MemberDto memberDto) {
 
         return memberService.checkDuplicateId(memberDto.getUserId());
