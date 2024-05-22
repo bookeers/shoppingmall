@@ -3,6 +3,7 @@ package com.shinhansec.shoppingmall.exception;
 import com.shinhansec.shoppingmall.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,4 +33,11 @@ public class GlobalExceptionHandler {
 
         return error(errorMessages, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiUtils.ApiResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.error("잘못된 요청입니다!", ex);
+        return error("잘못된 요청입니다!", HttpStatus.BAD_REQUEST);
+    }
+
 }
