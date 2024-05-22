@@ -18,6 +18,9 @@ public class Member {
     private String email;
     private String contact;
 
+    public Member() {
+    }
+
     public Member(String userId, String pw, String name, String email, String contact) {
         this.userId = userId;
         this.pw = pw;
