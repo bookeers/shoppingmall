@@ -1,35 +1,10 @@
 package com.shinhansec.shoppingmall.member;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
-
+import java.util.Optional;
 
 @Repository
-public class MemberRepository {
+public interface MemberRepository extends JpaRepository<Member, Integer> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public void save(Member member) {
-        entityManager.persist(member);
-    }
-
-    public Member findByUserId(String userId) {
-        List<Member> members =
-                entityManager.createQuery("select m from Member m where m.userId = :userId", Member.class)
-                .setParameter("userId", userId).getResultList();
-        if (members.isEmpty()) {
-
-            return null;
-        }
-        else {
-            return members.get(0);
-        }
-    }
-
-    public Member findById(int id) {
-        return entityManager.find(Member.class, id);
-    }
+    Optional<Member> findByUserId(String userId);
 }

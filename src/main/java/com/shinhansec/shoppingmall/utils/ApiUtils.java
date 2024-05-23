@@ -1,5 +1,4 @@
-package com.shinhansec.shoppingmall.utils;
-import lombok.AllArgsConstructor;
+package com.shinhansec.shoppingmall.utils;import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

@@ -1,6 +1,8 @@
 package com.shinhansec.shoppingmall.member;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,7 @@ import lombok.Setter;
 @Entity
 public class Member {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String userId;
@@ -38,10 +41,10 @@ public class Member {
                 memberDto.getContact()
         );
     }
+
     @Override
     public String toString() {
         return String.format("userId='%s', pw='%s', name='%s', email='%s', contact='%s'",
                 userId, pw, name, email, contact);
-
     }
 }
