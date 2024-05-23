@@ -6,32 +6,27 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import static com.shinhansec.shoppingmall.utils.ApiUtils.error;
-import static com.shinhansec.shoppingmall.utils.ApiUtils.success;
 
 @Slf4j
 @AllArgsConstructor
 @RestController
 public class MemberController {
-
-    MemberService memberService;
+    private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ApiUtils.ApiResult signup(@Valid @RequestBody MemberDto memberDto) {
-
-        if(isDuplicateId(memberDto))
-            return error("이미 존재하는 아이디입니다", HttpStatus.CONFLICT);
+    public ApiUtils.ApiResult<String> signup(@Valid @RequestBody MemberDTO memberDto) {
+        if (isDuplicateId(memberDto)) {
+            return ApiUtils.error(null, "이미 존재하는 아이디입니다", HttpStatus.CONFLICT);
+        }
 
         Member requestMember = memberDto.convertToEntity();
         String userId = memberService.join(requestMember);
-        return success(userId);
+        return ApiUtils.success(userId);
     }
 
-    //todo 로그인 구현
+    // todo 로그인 구현
 
-    private boolean isDuplicateId(MemberDto memberDto) {
-
+    private boolean isDuplicateId(MemberDTO memberDto) {
         return memberService.checkDuplicateId(memberDto.getUserId());
     }
-
 }

@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.shinhansec.shoppingmall.utils.ApiUtils.error;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,13 +28,20 @@ public class GlobalExceptionHandler {
 
         log.info("errorMessages={}", errorMessages);
 
-        return error(errorMessages, HttpStatus.BAD_REQUEST);
+        return ApiUtils.error(errorMessages, "유효성 검사 오류", HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiUtils.ApiResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.error("잘못된 요청입니다!", ex);
-        return error("잘못된 요청입니다!", HttpStatus.BAD_REQUEST);
+        log.error("메세지가 없습니다!", ex.getMessage());
+        return ApiUtils.error(null, ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiUtils.ApiResult<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("잘못된 요청입니다!", ex.getMessage());
+        return ApiUtils.error(null, ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

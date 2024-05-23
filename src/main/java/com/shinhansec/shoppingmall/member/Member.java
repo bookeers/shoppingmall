@@ -29,7 +29,7 @@ public class Member {
         this.contact = contact;
     }
 
-    public static Member fromDtoToEntity(MemberDto memberDto) {
+    public static Member fromDtoToEntity(MemberDTO memberDto) {
         return new Member(
                 memberDto.getUserId(),
                 memberDto.getPw(),

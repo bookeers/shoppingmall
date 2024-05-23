@@ -9,8 +9,5 @@ import java.util.Optional;
 public interface MemberJPARepository
      extends JpaRepository<Member, Integer> {
 
- //extends 기본 메소드 -> hibernate로 그대로 사용
- //커스텀 메소드( querybyexampleexecutor)
-
  Optional <Member> findByUserId(String userId);
  }

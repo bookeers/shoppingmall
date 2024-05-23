@@ -1,11 +1,12 @@
 package com.shinhansec.shoppingmall.product;
-
+import com.shinhansec.shoppingmall.utils.ApiUtils;
 import com.shinhansec.shoppingmall.utils.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,37 +14,38 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 public class ProductController {
-
     private final ProductService productService;
 
     @PostMapping("/products")
-    public ResponseEntity<Void> registerProduct(@RequestBody Product product) {
-        if (Validator.isAlpha(product.getName()) && Validator.isNumber(product.getPrice())) {
-            log.info(product.getName());
+    public ResponseEntity<ApiUtils.ApiResult<ProductDTO>> registerProduct(@RequestBody ProductDTO productDTO) {
+        try {
+            if (Validator.isAlpha(productDTO.getName()) && Validator.isNumber(productDTO.getPrice())) {
+                log.info(productDTO.getName());
 
-            Product savedProduct = productService.registerProduct(product);
+                ProductDTO savedProduct = productService.registerProduct(productDTO);
 
-            try {
-                log.info(savedProduct.getName());
+                try {
+                    log.info(savedProduct.getName());
+                } catch (NullPointerException e) {
+                    return new ResponseEntity<>(ApiUtils.error(null, "서버 오류", HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
 
-            } catch (NullPointerException e) {
-
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(ApiUtils.success(savedProduct), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(ApiUtils.error(null, "잘못된 입력 값입니다.", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
             }
-
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(ApiUtils.error(null, e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
     }
 
+
     @GetMapping("/products/{id}")
-    public ResponseEntity<Product> findProduct(@PathVariable("id") int id) {
+    public ResponseEntity<ProductDTO> findProduct(@PathVariable("id") int id) {
         if (!Validator.isNumber(id)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Product resultProduct = productService.findProduct(id);
+        ProductDTO resultProduct = productService.findProduct(id);
 
         if (resultProduct == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -53,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> findProducts(
+    public ResponseEntity<List<ProductDTO>> findProducts(
             @RequestParam(value = "limit", defaultValue = "10") int limit,
             @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
@@ -61,12 +63,11 @@ public class ProductController {
         log.info("currentPage = {}", currentPage);
         log.info("categoryId = {}", categoryId);
 
-        List<Product> products = (categoryId == null) ? productService.findProducts(limit, currentPage)
+        List<ProductDTO> products = (categoryId == null) ? productService.findProducts(limit, currentPage)
                 : productService.findProducts(limit, currentPage, categoryId);
 
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
-
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") int id) {
@@ -75,10 +76,10 @@ public class ProductController {
         }
 
         productService.deleteProduct(id);
-        Product product = productService.findProduct(id);
+        ProductDTO product = productService.findProduct(id);
 
-        return product == null ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return product == null ? new ResponseEntity<>(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/products/delete")

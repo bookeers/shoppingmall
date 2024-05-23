@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     OrderService orderService;
     ProductService productService;
-
+/*
     @PostMapping("/orders")
     public void orderProduct(@RequestBody OrderDTO orderDto) {
 
@@ -25,7 +25,7 @@ public class OrderController {
 
         orderService.orderProduct(requestOrder);
     }
-
+*/
     // 주문 개별 조회
 
     // 주문 전체 조회
